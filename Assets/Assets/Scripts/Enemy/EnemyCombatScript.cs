@@ -24,13 +24,13 @@ public class EnemyCombatScript : MonoBehaviour
     public float critRate;
     public float recoveryTimeAfterAttack;
 
-    private PopupTextHandler popup;
-    private PlayerSoundManager soundManager;
+    protected PopupTextHandler popup;
+    protected PlayerSoundManager soundManager;
 
-    private bool canHit;
+    protected bool canHit;
 
     // Use this for initialization
-    public void Start()
+    public virtual void Start()
     {
         playerTransform = GameObject.FindWithTag("Player").transform;
         anim = GetComponent<Animator>();
@@ -42,7 +42,7 @@ public class EnemyCombatScript : MonoBehaviour
     }
 
     // Update is called once per frame
-    public void Update()
+    public virtual void Update()
     {
         playerPos2D = playerTransform.position;
         myPos2D = myTransform.position;
@@ -151,7 +151,7 @@ public class EnemyCombatScript : MonoBehaviour
         movementScript.PushbackTo(-DirectionPointingToPlayer());
     }
 
-    public void Die()
+    public virtual void Die()
     {
         dieTimer += Time.deltaTime;
         //anim.SetTrigger("dying");
@@ -172,7 +172,7 @@ public class EnemyCombatScript : MonoBehaviour
         }
     }
 
-    protected void CheckForDieDelay()
+    protected virtual void CheckForDieDelay()
     {
         if (dieTimer > 0f && dieTimer < dieDelay)
         {
@@ -205,10 +205,5 @@ public class EnemyCombatScript : MonoBehaviour
     protected bool SameXAsPlayer()
     {
         return myPos2D.x >= playerPos2D.x - 0.1 && myPos2D.x <= playerPos2D.x + 0.1;
-    }
-
-    public void OnDrawGizmos()
-    {
-        Gizmos.DrawWireSphere(transform.position, awarenessDistance);
     }
 }

@@ -28,7 +28,7 @@ public class ProjectileScript : MonoBehaviour
         CheckForBurstTime();
     }
 
-    public void OnTriggerEnter2D(Collider2D other)
+    public virtual void OnTriggerEnter2D(Collider2D other)
     {
         if (IsTagged("Ground", other))
         {
@@ -40,22 +40,22 @@ public class ProjectileScript : MonoBehaviour
         } 
     }
 
-    private void Hit(Collider2D other)
+    protected void Hit(Collider2D other)
     {
         if (Random.value <= critRate)
         {
             int critDamage = System.Math.Max(NormalDistribution.CalculateNormalDistRandom(damage * 4, 5),0);
             other.SendMessage("TakeCritDamage", critDamage);
-            other.SendMessage("Pushback");
+            //other.SendMessage("Pushback");
         } else
         {
             int normalDamage = System.Math.Max(NormalDistribution.CalculateNormalDistRandom(damage, 5),0);
             other.SendMessage("TakeDamage", normalDamage);
-            other.SendMessage("Pushback");
+            //other.SendMessage("Pushback");
         }
     }
 
-    private void HitOrMiss(Collider2D other)
+    protected void HitOrMiss(Collider2D other)
     {
         if(Random.value <= hitRate)
         {
@@ -67,12 +67,12 @@ public class ProjectileScript : MonoBehaviour
         }
     }
 
-    private void Miss(Collider2D other)
+    protected void Miss(Collider2D other)
     {
         other.SendMessage("ShowMiss");
     }
 
-    private bool IsTagged(string tag, Collider2D other)
+    protected bool IsTagged(string tag, Collider2D other)
     {
         bool res = false;
         if (other.transform.parent != null)
@@ -86,7 +86,7 @@ public class ProjectileScript : MonoBehaviour
         return res;
     }
 
-    private void Burst()
+    protected void Burst()
     {
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = explotionSprite;
@@ -96,7 +96,7 @@ public class ProjectileScript : MonoBehaviour
         GetComponent<BoxCollider2D>().enabled = false;
     }
 
-    private void CheckForDisappearTime()
+    protected void CheckForDisappearTime()
     {
         if (timer < maxTime)
         {
@@ -108,7 +108,7 @@ public class ProjectileScript : MonoBehaviour
         }
     }
 
-    private void CheckForBurstTime()
+    protected void CheckForBurstTime()
     {
         if (shouldBurst && burstTimer < burstMaxTime)
         {
