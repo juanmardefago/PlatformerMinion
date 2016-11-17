@@ -12,6 +12,7 @@ public class PlayerMovement : MonoBehaviour
     [HideInInspector]
     public bool grounded;
     private Animator anim;
+    private PlayerSoundManager soundManager;
 
     // Use this for initialization
     void Start()
@@ -20,6 +21,7 @@ public class PlayerMovement : MonoBehaviour
         facingRight = true;
         grounded = false;
         anim = GetComponent<Animator>();
+        soundManager = GetComponent<PlayerSoundManager>();
     }
 
     void Update()
@@ -71,6 +73,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (grounded)
         {
+            soundManager.PlayJumpSound();
             anim.SetBool("IsJumping", true);
             rBody.velocity = new Vector2(rBody.velocity.x, jumpForce);
             grounded = false;

@@ -15,6 +15,7 @@ public class PlayerCombat : MonoBehaviour {
     public float critRate;
 
     private PopupTextHandler popup;
+    private PlayerSoundManager soundManager;
 
 	// Use this for initialization
 	void Start () {
@@ -22,6 +23,7 @@ public class PlayerCombat : MonoBehaviour {
         shooting = false;
         popup = GetComponent<PopupTextHandler>();
         health = maxHealth;
+        soundManager = GetComponent<PlayerSoundManager>();
     }
 	
 	// Update is called once per frame
@@ -64,12 +66,14 @@ public class PlayerCombat : MonoBehaviour {
 
     public void TakeDamage(int damage)
     {
+        soundManager.PlayHitSound();
         DoTakeDamage(damage);
         popup.Show(damage.ToString());
     }
 
     public void TakeCritDamage(int damage)
     {
+        soundManager.PlayCriticalHitSound();
         DoTakeDamage(damage);
         popup.Show(damage.ToString(), Color.red);
     }
@@ -83,5 +87,6 @@ public class PlayerCombat : MonoBehaviour {
     {
         transform.position = new Vector3(-6f, -1.35f, 0f);
         health = maxHealth;
+        soundManager.PlayDeathSound();
     }
 }

@@ -24,7 +24,8 @@ public class EnemyCombatScript : MonoBehaviour
     public float critRate;
     public float recoveryTimeAfterAttack;
 
-    protected PopupTextHandler popup;
+    private PopupTextHandler popup;
+    private PlayerSoundManager soundManager;
 
     private bool canHit;
 
@@ -37,6 +38,7 @@ public class EnemyCombatScript : MonoBehaviour
         movementScript = GetComponent<EnemyMovementBasic>();
         popup = GetComponent<PopupTextHandler>();
         canHit = true;
+        soundManager = GetComponent<PlayerSoundManager>();
     }
 
     // Update is called once per frame
@@ -116,12 +118,14 @@ public class EnemyCombatScript : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        soundManager.PlayHitSound();
         DoTakeDamage(damage);
         popup.Show(damage.ToString());
     }
 
     public void TakeCritDamage(int damage)
     {
+        soundManager.PlayCriticalHitSound();
         DoTakeDamage(damage);
         popup.Show(damage.ToString(), Color.red);
     }
@@ -153,6 +157,7 @@ public class EnemyCombatScript : MonoBehaviour
         //anim.SetTrigger("dying");
         movementScript.MakeKinematic();
         GetComponent<BoxCollider2D>().enabled = false;
+        soundManager.PlayDeathSound();
     }
 
     protected void DecreaseAggro()
