@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System;
 
 public class ProjectileScript : MonoBehaviour
 {
@@ -43,14 +42,14 @@ public class ProjectileScript : MonoBehaviour
 
     private void Hit(Collider2D other)
     {
-        if (UnityEngine.Random.value <= critRate)
+        if (Random.value <= critRate)
         {
-            int critDamage = CalculateNormalDistRandom(damage * 4, 2);
+            int critDamage = System.Math.Max(NormalDistribution.CalculateNormalDistRandom(damage * 4, 5),0);
             other.SendMessage("TakeCritDamage", critDamage);
             other.SendMessage("Pushback");
         } else
         {
-            int normalDamage = CalculateNormalDistRandom(damage, 2);
+            int normalDamage = System.Math.Max(NormalDistribution.CalculateNormalDistRandom(damage, 5),0);
             other.SendMessage("TakeDamage", normalDamage);
             other.SendMessage("Pushback");
         }
@@ -58,7 +57,7 @@ public class ProjectileScript : MonoBehaviour
 
     private void HitOrMiss(Collider2D other)
     {
-        if(UnityEngine.Random.value <= hitRate)
+        if(Random.value <= hitRate)
         {
             Hit(other);
             Burst();
@@ -70,23 +69,7 @@ public class ProjectileScript : MonoBehaviour
 
     private void Miss(Collider2D other)
     {
-        other.SendMessage("Miss");
-    }
-
-    private int CalculateNormalDistRandom(int mean, int deviation)
-    {
-        double u, v, S;
-
-        do
-        {
-            u = 2.0 * UnityEngine.Random.value - 1.0;
-            v = 2.0 * UnityEngine.Random.value - 1.0;
-            S = u * u + v * v;
-        }
-        while (S >= 1.0);
-
-        double fac = Math.Sqrt(-2.0 * Math.Log(S) / S);
-        return (int) ((u * fac) * deviation + mean);
+        other.SendMessage("ShowMiss");
     }
 
     private bool IsTagged(string tag, Collider2D other)

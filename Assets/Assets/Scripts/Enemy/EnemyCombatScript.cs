@@ -20,7 +20,13 @@ public class EnemyCombatScript : MonoBehaviour
 
     public int damage;
 
+    public float hitRate;
+    public float critRate;
+    public float recoveryTimeAfterAttack;
+
     protected PopupTextHandler popup;
+
+    private bool canHit;
 
     // Use this for initialization
     public void Start()
@@ -30,6 +36,7 @@ public class EnemyCombatScript : MonoBehaviour
         myTransform = GetComponent<Transform>();
         movementScript = GetComponent<EnemyMovementBasic>();
         popup = GetComponent<PopupTextHandler>();
+        canHit = true;
     }
 
     // Update is called once per frame
@@ -53,10 +60,58 @@ public class EnemyCombatScript : MonoBehaviour
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.transform.tag == "Player" && dieTimer == 0f)
+        if (canHit && collision.collider.tag == "Player" && dieTimer == 0f)
         {
-            collision.transform.gameObject.SendMessage("TakeDamage", damage);
+            HitOrMiss(collision.gameObject);
+            StartCoroutine(AttackRecovery());
         }
+    }
+
+    public void OnCollisionStay2D(Collision2D collision)
+    {
+        if (canHit && collision.collider.tag == "Player" && dieTimer == 0f)
+        {
+            HitOrMiss(collision.gameObject);
+            StartCoroutine(AttackRecovery());
+        }
+    }
+
+    private IEnumerator AttackRecovery()
+    {
+        canHit = false;
+        yield return new WaitForSeconds(recoveryTimeAfterAttack);
+        canHit = true;
+    }
+
+    private void Hit(GameObject other)
+    {
+        if (Random.value <= critRate)
+        {
+            int critDamage = System.Math.Max(NormalDistribution.CalculateNormalDistRandom(damage * 3, 5),0);
+            other.SendMessage("TakeCritDamage", critDamage);
+        }
+        else
+        {
+            int normalDamage = System.Math.Max(NormalDistribution.CalculateNormalDistRandom(damage, 5),0);
+            other.SendMessage("TakeDamage", normalDamage);
+        }
+    }
+
+    private void HitOrMiss(GameObject other)
+    {
+        if (Random.value <= hitRate)
+        {
+            Hit(other);
+        }
+        else
+        {
+            Miss(other);
+        }
+    }
+
+    private void Miss(GameObject other)
+    {
+        other.SendMessage("ShowMiss");
     }
 
     public void TakeDamage(int damage)
@@ -81,9 +136,9 @@ public class EnemyCombatScript : MonoBehaviour
         aggro = 3f;
     }
 
-    public void Miss()
+    public void ShowMiss()
     {
-        popup.Show("Miss");
+        popup.Show("Miss",Color.grey);
     }
 
     public void Pushback()

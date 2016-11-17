@@ -53,14 +53,30 @@ public class PlayerCombat : MonoBehaviour {
         shot.GetComponent<ProjectileScript>().SetRates(hitRate, critRate);
     }
 
-    public void TakeDamage(int damage)
+    public void DoTakeDamage(int damage)
     {
         health -= damage;
         if (health <= 0)
         {
             Die();
         }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        DoTakeDamage(damage);
         popup.Show(damage.ToString());
+    }
+
+    public void TakeCritDamage(int damage)
+    {
+        DoTakeDamage(damage);
+        popup.Show(damage.ToString(), Color.red);
+    }
+
+    public void ShowMiss()
+    {
+        popup.Show("Miss", Color.grey);
     }
 
     public void Die()
